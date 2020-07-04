@@ -1,26 +1,18 @@
 import React from 'react';
+import {BrowserRouter as Router, Route} from 'react-router-dom';
 import Todos from './components/Todos';
+import Header from './components/layout/Header';
+import AddTodo from './components/AddTodo';
+import About from './components/Pages/About';
 import './App.css';
+import Axios from 'axios';
 
 class App extends React.Component{
   state = {
-    todos: [
-      {
-        id: 1,
-        title: 'Take out the trash',
-        completed: false
-      },
-      {
-        id: 2,
-        title: 'Dinner',
-        completed: false
-      },
-      {
-        id: 3,
-        title: 'Meeting with boss',
-        completed: true
-      }
-    ]
+    todos: []
+  };
+  componentDidMount(){
+    Axios.get('https://jsonplaceholder.typicode.com/todos?_limit=10').then(res => this.setState({todos: res.data}));
   }
   //Toggle Complete
   markComplete = (id) => {
@@ -28,14 +20,34 @@ class App extends React.Component{
       if (todo.id === id) todo.completed = !todo.completed;
       return todo;
     })});
+  };
+  //Delete TD
+  deleteTD = (id) => {
+    Axios.delete('https://jsonplaceholder.typicode.com/todos')
+    .then(res => this.setState({todos: [...this.state.filter(todo => todo.id !== id)]}));
+  };
+  //Add TD
+  addTodo = (title) => {
+    Axios.post('https://jsonplaceholder.typicode.com/todos', {
+      title, completed: false
+    }).then(res => this.setState({todos: [...this.state.todos, res.data]}));
   }
   render(){
-    console.log(this.state.todos);
     return(
-      <div className="App">
-        <h1>First Line</h1>
-        <Todos todos={this.state.todos} markComplete={this.markComplete}/>
-      </div>
+      <Router>
+        <div className="App">
+          <Header />
+          <Route exact path="/" render={props => (
+            <React.Fragment>
+              <AddTodo addTodo={this.addTodo}/>
+              <Todos todos={this.state.todos}
+              markComplete={this.markComplete}
+              deleteTD={this.deleteTD}/>
+            </React.Fragment>
+          )} />
+          <Route path="/About" component={About} />
+        </div>
+      </Router>
     );
   }
 }
