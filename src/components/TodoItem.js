@@ -3,11 +3,17 @@ import PropTypes from 'prop-types';
 
 export class TodoItem extends React.Component{
     getStyle = () => {
+        const yeet = Math.floor(Math.random() * 100) + "%";
+        const yeet2 = Math.floor(Math.random() * 100) + "%";
+        console.log(yeet);
         return{
             background: '#f4f4f4',
             padding: '12px',
             borderBottom: '1px #ccc dotted',
-            textDecoration: this.props.todo.completed ? 'line-through' : 'none'
+            textDecoration: this.props.todo.completed ? 'line-through' : 'none',
+            position: 'absolute',
+            top: yeet,
+            left: yeet2
         };
     };
     render(){
